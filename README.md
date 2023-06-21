@@ -22,7 +22,7 @@ python parser for human-readable period dates
 ```python
 import periodparser as pp
 
-result = pp.exctract('Техобслуживание пройдет с вечера следующей среды до пол 9 утра')
+result = pp.extract('Техобслуживание пройдет с вечера следующей среды до пол 9 утра')
 print(result.dates[
           0])  # [Type=DateTimeTokenType.PERIOD, From=2023-06-28T17:00:00, To=2023-06-29T08:30:00, Span=None, HasTime=True, StartIndex=24, EndIndex=62]
 ```

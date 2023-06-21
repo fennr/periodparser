@@ -36,7 +36,7 @@ def preprocess_today(phrase: str) -> str:
     return phrase
 
 
-def exctract(phrase: str, now: Optional[datetime] = None) -> ParseResult:
+def extract(phrase: str, now: Optional[datetime] = None) -> ParseResult:
     """
         Извлекает период времени из заданной фразы и возвращает объект PeriodResult
 
