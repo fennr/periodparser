@@ -1,1 +1,4 @@
-from periodparser.sugar import extract
+from .sugar import exctract
+
+
+VERSION = "0.1.5"

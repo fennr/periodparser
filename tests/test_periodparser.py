@@ -1,326 +1,326 @@
 import unittest
 from datetime import datetime
 
-from src.periodparser import extract
+from src.periodparser import exctract
 from src.periodparser.models.parser_models import DateTimeTokenType
 
 
 class BaseParserTests(unittest.TestCase):
     def test_no_dates(self):
-        result = extract("в день, какой неведомо, в никаком году")
-        assert len(result.dates) == 0
+        result = exctract("в день, какой неведомо, в никаком году")
+        self.assertEqual(0, len(result.dates))
 
     def test_january(self):
         starting_point = datetime(2019, 10, 13)
-        result = extract("10 января событие", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("10 января событие", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.date_from.day == 10
-        assert date.date_from.month == 1
-        assert date.date_from.year == 2020
+        self.assertEqual(10, date.date_from.day)
+        self.assertEqual(1, date.date_from.month)
+        self.assertEqual(2020, date.date_from.year)
 
     def test_time_period_before_day(self):
         starting_point = datetime(2019, 10, 13)
-        result = extract("c 5 до 7 вечера в понедельник будет событие", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("с 5 до 7 вечера в понедельник будет событие", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.date_from.hour == 17
-        assert date.date_to.hour == 19
-        assert date.date_from.day == 14
-        assert date.date_to.day == 14
+        self.assertEqual(17, date.date_from.hour)
+        self.assertEqual(19, date.date_to.hour)
+        self.assertEqual(14, date.date_from.day)
+        self.assertEqual(14, date.date_to.day)
 
     def test_time_period_simple(self):
         starting_point = datetime(2019, 10, 13)
-        result = extract("c 10 до 13 событие", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("с 10 до 13 событие", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.PERIOD
-        assert date.date_from.hour == 10
-        assert date.date_to.hour == 13
+        self.assertEqual(DateTimeTokenType.PERIOD, date.type)
+        self.assertEqual(10, date.date_from.hour)
+        self.assertEqual(13, date.date_to.hour)
 
     def test_daytime(self):
         starting_point = datetime(2019, 10, 14)
-        result = extract("Завтра в час обед и продлится он час c небольшим", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("Завтра в час обед и продлится он час с небольшим", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.FIXED
-        assert date.date_from.hour == 13
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(13, date.date_from.hour)
 
     def test_nighttime(self):
         starting_point = datetime(2020, 1, 1)
-        result = extract(
-            "Завтра в 2 ночи полнолуние, a затем в 3 часа ночи новолуние и наконец в 12 часов ночи игра.",
+        result = exctract(
+            "Завтра в 2 ночи полнолуние, а затем в 3 часа ночи новолуние и наконец в 12 часов ночи игра.",
             starting_point,
         )
-        assert len(result.dates) == 3
+        self.assertEqual(3, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.FIXED
-        assert date.date_from.hour == 2
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(2, date.date_from.hour)
 
         date = result.dates[1]
-        assert date.type == DateTimeTokenType.FIXED
-        assert date.date_from.hour == 3
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(3, date.date_from.hour)
 
         date = result.dates[2]
-        assert date.type == DateTimeTokenType.FIXED
-        assert date.date_from.hour == 0
-        assert date.date_from.day == 1
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(0, date.date_from.hour)
+        self.assertEqual(1, date.date_from.day)
 
     def test_long_period(self):
         starting_point = datetime(2019, 10, 14)
-        result = extract(
-            "C вечера следующей среды до четверти 10 утра понедельника в декабре можно будет наблюдать снег",
+        result = exctract(
+            "С вечера следующей среды до четверти 10 утра понедельника в декабре можно будет наблюдать снег",
             starting_point,
         )
-        assert len(result.dates) == 1
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.PERIOD
-        assert date.date_from.year == 2019
-        assert date.date_from.day == 23
-        assert date.date_from.month == 10
-        assert date.date_to.day == 2
-        assert date.date_to.month == 12
-        assert date.date_to.hour == 9
-        assert date.date_to.minute == 15
+        self.assertEqual(DateTimeTokenType.PERIOD, date.type)
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(23, date.date_from.day)
+        self.assertEqual(10, date.date_from.month)
+        self.assertEqual(2, date.date_to.day)
+        self.assertEqual(12, date.date_to.month)
+        self.assertEqual(9, date.date_to.hour)
+        self.assertEqual(15, date.date_to.minute)
 
     def test_collapse_complex(self):
         starting_point = datetime(2019, 10, 13)
-        result = extract("B понедельник в 9 и 10 вечера", starting_point)
-        assert len(result.dates) == 2
+        result = exctract("В понедельник в 9 и 10 вечера", starting_point)
+        self.assertEqual(2, len(result.dates))
 
         date = result.dates[0]
-        assert date.date_from.year == 2019
-        assert date.date_from.day == 14
-        assert date.date_from.hour == 21
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(14, date.date_from.day)
+        self.assertEqual(21, date.date_from.hour)
 
         date = result.dates[1]
-        assert date.date_from.day == 14
-        assert date.date_from.hour == 22
+        self.assertEqual(14, date.date_from.day)
+        self.assertEqual(22, date.date_from.hour)
 
-        result = extract("B понедельник в 10 и 9 вечера", starting_point)
-        assert len(result.dates) == 2
+        result = exctract("В понедельник в 10 и 9 вечера", starting_point)
+        self.assertEqual(2, len(result.dates))
 
         date = result.dates[0]
-        assert date.date_from.year == 2019
-        assert date.date_from.day == 14
-        assert date.date_from.hour == 22
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(14, date.date_from.day)
+        self.assertEqual(22, date.date_from.hour)
 
         date = result.dates[1]
-        assert date.date_from.day == 14
-        assert date.date_from.hour == 21
+        self.assertEqual(14, date.date_from.day)
+        self.assertEqual(21, date.date_from.hour)
 
     def test_multiple_simple(self):
         starting_point = datetime(2019, 10, 13)
-        result = extract(
-            "Позавчера в 6:30 состоялось совещание, a завтра днём будет хорошая погода.",
+        result = exctract(
+            "Позавчера в 6:30 состоялось совещание, а завтра днём будет хорошая погода.",
             starting_point,
         )
-        assert len(result.dates) == 2
+        self.assertEqual(2, len(result.dates))
 
         date = result.dates[0]
-        assert date.date_from.year == 2019
-        assert date.date_from.day == 11
-        assert date.date_from.hour == 6
-        assert date.date_from.minute == 30
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(11, date.date_from.day)
+        self.assertEqual(6, date.date_from.hour)
+        self.assertEqual(30, date.date_from.minute)
 
         date = result.dates[1]
-        assert date.date_from.year == 2019
-        assert date.date_from.day == 14
-        assert True is date.has_time
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(14, date.date_from.day)
+        self.assertEqual(True, date.has_time)
 
     def test_collapse_direction(self):
         starting_point = datetime(2019, 10, 15)
         strings = [
-            "B следующем месяце c понедельника буду ходить в спортзал!",
-            "C понедельника в следующем месяце буду ходить в спортзал!",
+            "В следующем месяце с понедельника буду ходить в спортзал!",
+            "С понедельника в следующем месяце буду ходить в спортзал!",
         ]
         for s in strings:
-            result = extract(s, starting_point)
-            assert len(result.dates) == 1
+            result = exctract(s, starting_point)
+            self.assertEqual(1, len(result.dates))
 
             date = result.dates[0]
-            assert date.date_from.year == 2019
-            assert date.date_from.day == 4
-            assert date.date_from.month == 11
+            self.assertEqual(2019, date.date_from.year)
+            self.assertEqual(4, date.date_from.day)
+            self.assertEqual(11, date.date_from.month)
 
     def test_weekday(self):
         starting_point = datetime(2019, 10, 13)
-        result = extract("B следующем месяце во вторник состоится событие", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("В следующем месяце во вторник состоится событие", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.date_from.year == 2019
-        assert date.date_from.day == 5
-        assert date.date_from.month == 11
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(5, date.date_from.day)
+        self.assertEqual(11, date.date_from.month)
 
-        result = extract("Через месяц во вторник состоится событие", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("Через месяц во вторник состоится событие", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.date_from.year == 2019
-        assert date.date_from.day == 12
-        assert date.date_from.month == 11
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(12, date.date_from.day)
+        self.assertEqual(11, date.date_from.month)
 
     def test_time_after_day(self):
         starting_point = datetime(2019, 10, 8)
-        result = extract("в четверг 16 0 0 будет событие", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("в четверг 16 0 0 будет событие", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.FIXED
-        assert True is date.has_time
-        assert date.date_from.hour == 16
-        assert date.date_from.day == 10
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(True, date.has_time)
+        self.assertEqual(16, date.date_from.hour)
+        self.assertEqual(10, date.date_from.day)
 
     def test_time_period(self):
         starting_point = datetime(2019, 9, 7)
-        result = extract(
-            "B следующий четверг c 9 утра до 6 вечера важный экзамен!", starting_point
+        result = exctract(
+            "В следующий четверг с 9 утра до 6 вечера важный экзамен!", starting_point
         )
-        assert len(result.dates) == 1
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert True is date.has_time
-        assert date.date_from.hour == 9
-        assert date.date_from.day == 12
-        assert date.date_from.month == 9
-        assert date.date_to.hour == 18
-        assert date.date_to.day == 12
-        assert date.date_to.month == 9
-        assert date.date_from.year == 2019
-        assert date.date_to.year == 2019
+        self.assertEqual(True, date.has_time)
+        self.assertEqual(9, date.date_from.hour)
+        self.assertEqual(12, date.date_from.day)
+        self.assertEqual(9, date.date_from.month)
+        self.assertEqual(18, date.date_to.hour)
+        self.assertEqual(12, date.date_to.day)
+        self.assertEqual(9, date.date_to.month)
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(2019, date.date_to.year)
 
     def test_complex_period(self):
         starting_point = datetime(2019, 7, 7)
-        result = extract(
-            "хакатон c 12 часов 18 сентября до 12 часов 20 сентября", starting_point
+        result = exctract(
+            "хакатон с 12 часов 18 сентября до 12 часов 20 сентября", starting_point
         )
-        assert len(result.dates) == 1
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.PERIOD
-        assert True is date.has_time
-        assert date.date_from.hour == 12
-        assert date.date_from.day == 18
-        assert date.date_from.month == 9
-        assert date.date_to.hour == 12
-        assert date.date_to.day == 20
-        assert date.date_to.month == 9
-        assert date.date_from.year == 2019
-        assert date.date_to.year == 2019
+        self.assertEqual(DateTimeTokenType.PERIOD, date.type)
+        self.assertEqual(True, date.has_time)
+        self.assertEqual(12, date.date_from.hour)
+        self.assertEqual(18, date.date_from.day)
+        self.assertEqual(9, date.date_from.month)
+        self.assertEqual(12, date.date_to.hour)
+        self.assertEqual(20, date.date_to.day)
+        self.assertEqual(9, date.date_to.month)
+        self.assertEqual(2019, date.date_from.year)
+        self.assertEqual(2019, date.date_to.year)
 
     def test_time_before_day(self):
         starting_point = datetime(2019, 9, 7)
-        result = extract("B 12 часов 12 сентября будет встреча", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("В 12 часов 12 сентября будет встреча", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.FIXED
-        assert True is date.has_time
-        assert date.date_from.hour == 12
-        assert date.date_from.day == 12
-        assert date.date_from.month == 9
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(True, date.has_time)
+        self.assertEqual(12, date.date_from.hour)
+        self.assertEqual(12, date.date_from.day)
+        self.assertEqual(9, date.date_from.month)
 
     def test_time_hour_of_day(self):
         starting_point = datetime(2019, 9, 7)
-        result = extract("24 сентября в час дня", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("24 сентября в час дня", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.FIXED
-        assert True is date.has_time
-        assert date.date_from.hour == 13
-        assert date.date_from.day == 24
-        assert date.date_from.month == 9
-        assert date.date_from.year == 2019
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(True, date.has_time)
+        self.assertEqual(13, date.date_from.hour)
+        self.assertEqual(24, date.date_from.day)
+        self.assertEqual(9, date.date_from.month)
+        self.assertEqual(2019, date.date_from.year)
 
     def test_fix_period(self):
         starting_point = datetime(2019, 9, 7)
-        result = extract("на выходных будет хорошо", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("на выходных будет хорошо", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.PERIOD
-        assert date.date_from.day == 14
-        assert date.date_to.day == 15
+        self.assertEqual(DateTimeTokenType.PERIOD, date.type)
+        self.assertEqual(14, date.date_from.day)
+        self.assertEqual(15, date.date_to.day)
 
     def test_dates_period(self):
         starting_point = datetime(2019, 8, 6)
         strings = [
-            "c 11 по 15 сентября будет командировка",
+            "с 11 по 15 сентября будет командировка",
             "от 11 по 15 сентября будет командировка",
-            "c 11 до 15 сентября будет командировка",
+            "с 11 до 15 сентября будет командировка",
         ]
         for s in strings:
-            result = extract(s, starting_point)
-            assert len(result.dates) == 1
+            result = exctract(s, starting_point)
+            self.assertEqual(1, len(result.dates))
 
             date = result.dates[0]
-            assert date.type == DateTimeTokenType.PERIOD
-            assert date.date_from.day == 11
-            assert date.date_to.day == 15
-            assert date.date_from.month == 9
-            assert date.date_to.month == 9
+            self.assertEqual(DateTimeTokenType.PERIOD, date.type)
+            self.assertEqual(11, date.date_from.day)
+            self.assertEqual(15, date.date_to.day)
+            self.assertEqual(9, date.date_from.month)
+            self.assertEqual(9, date.date_to.month)
 
         starting_point = datetime(2019, 9, 6)
-        result = extract("c 11 до 15 числа будет командировка", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("с 11 до 15 числа будет командировка", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.PERIOD
-        assert date.date_from.day == 11
-        assert date.date_to.day == 15
-        assert date.date_from.month == 9
-        assert date.date_to.month == 9
+        self.assertEqual(DateTimeTokenType.PERIOD, date.type)
+        self.assertEqual(11, date.date_from.day)
+        self.assertEqual(15, date.date_to.day)
+        self.assertEqual(9, date.date_from.month)
+        self.assertEqual(9, date.date_to.month)
 
     def test_days_of_week(self):
         starting_point = datetime(2019, 9, 6)
-        result = extract("во вторник встреча c заказчиком", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("во вторник встреча с заказчиком", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.FIXED
-        assert date.date_from.day == 10
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(10, date.date_from.day)
 
     def test_holidays(self):
         starting_point = datetime(2019, 9, 2)
-        result = extract("в эти выходные еду на дачу", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("в эти выходные еду на дачу", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.PERIOD
-        assert date.date_from.day == 7
-        assert date.date_to.day == 8
+        self.assertEqual(DateTimeTokenType.PERIOD, date.type)
+        self.assertEqual(7, date.date_from.day)
+        self.assertEqual(8, date.date_to.day)
 
     def test_holiday(self):
         starting_point = datetime(2019, 9, 2)
-        result = extract("пойду гулять в следующий выходной", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("пойду гулять в следующий выходной", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.FIXED
-        assert date.date_from.day == 14
-        assert date.date_to.day == 14
+        self.assertEqual(DateTimeTokenType.FIXED, date.type)
+        self.assertEqual(14, date.date_from.day)
+        self.assertEqual(14, date.date_to.day)
 
     def test_from_to_reversed(self):
         starting_point = datetime(2019, 10, 13)
-        result = extract("c 2 до 5", starting_point)
-        assert len(result.dates) == 1
+        result = exctract("с 2 до 5", starting_point)
+        self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
-        assert date.type == DateTimeTokenType.PERIOD
+        self.assertEqual(DateTimeTokenType.PERIOD, date.type)
         date_from = date.date_from
         date_to = date.date_to
-        assert date_from.hour == 14
-        assert date_to.hour == 17
-        assert date_from.day == 13
-        assert date_to.day == 13
+        self.assertEqual(14, date_from.hour)
+        self.assertEqual(17, date_to.hour)
+        self.assertEqual(13, date_from.day)
+        self.assertEqual(13, date_to.day)
 
 
 # class BaseHorsTests(unittest.TestCase):

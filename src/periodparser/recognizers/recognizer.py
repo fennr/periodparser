@@ -1,8 +1,9 @@
+from typing import List, Set, Callable, Any
 from datetime import datetime
 from re import finditer
-from typing import Any, Callable, List, Set
 
-from periodparser.models import DatesRawData
+from ..models import DatesRawData
+
 
 StrProvider = Callable[[], str]
 RecognizerMatcher = Callable[[Any], bool]

@@ -1,6 +1,6 @@
+from typing import List, Dict, Tuple, Optional, Union
 from enum import Enum
-from os.path import dirname, join
-from typing import Dict, List, Optional, Tuple, Union
+from os.path import join, dirname
 
 
 class LemmaSearchOptions(Enum):
@@ -51,7 +51,7 @@ def load() -> None:
     last_normal_form = None
 
     morph_dict_path = join(dirname(__file__), MORPH_DICT_FNAME)
-    with open(morph_dict_path, encoding="utf-8") as mdf:
+    with open(morph_dict_path, "rt", encoding="utf-8") as mdf:
         for line in mdf.readlines():
             line = line.strip()
             if line == "":

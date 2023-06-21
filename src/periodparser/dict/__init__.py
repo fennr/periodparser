@@ -1,2 +1,2 @@
-from periodparser.dict.keywords import Keywords
-from periodparser.dict.morph import LemmaSearchOptions, Morph
+from .keywords import Keywords
+from .morph import Morph, LemmaSearchOptions

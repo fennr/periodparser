@@ -1,16 +1,17 @@
+from typing import List, Tuple, Set
 from datetime import datetime, timedelta
-from random import randint
 from re import compile
+from random import randint
 from sys import maxsize
-from typing import List, Set, Tuple
 
-from periodparser.models import *
-from periodparser.models.parser_models import *
-from periodparser.recognizers import Recognizer, recognizers
+from .models import *
+from .models.parser_models import *
+from .recognizers import Recognizer, recognizers
+
 
 ITuplesList = List[Tuple[int, int]]
 
-RX_SPLIT = compile(r"[^a-яА-ЯёЁa-zA-Z0-9-]+")
+RX_SPLIT = compile(r"[^а-яА-ЯёЁa-zA-Z0-9-]+")
 
 
 def convert_to_token(period: AbstractPeriod, now: datetime) -> DateTimeToken:
@@ -244,7 +245,7 @@ def fix_overlap(final_periods: List[DateTimeToken]) -> None:
                 skipped.add(p)
 
 
-def parse(text: str, now: datetime) -> PeriodResult:
+def parse(text: str, now: datetime) -> ParseResult:
     tokens = RX_SPLIT.split(text)
     split_tokens = [(m.start(), m.end() - m.start()) for m in RX_SPLIT.finditer(text)]
     return do_parse(tokens, text, split_tokens, now)
@@ -252,7 +253,7 @@ def parse(text: str, now: datetime) -> PeriodResult:
 
 def do_parse(
     tokens: List[str], text: str, split_tokens: ITuplesList, now: datetime
-) -> PeriodResult:
+) -> ParseResult:
     collapse_distance = 4
 
     data = DatesRawData(tokens)
@@ -299,4 +300,4 @@ def do_parse(
     fix_overlap(final_periods)
     fix_indexes(final_periods, split_tokens)
 
-    return PeriodResult(text, [t.value for t in data.tokens], final_periods)
+    return ParseResult(text, [t.value for t in data.tokens], final_periods)

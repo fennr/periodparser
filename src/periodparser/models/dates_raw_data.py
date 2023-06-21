@@ -1,9 +1,9 @@
 from typing import List
 
-from periodparser.models.abstract_period import AbstractPeriod
-from periodparser.models.i_has_edges import IHasEdges
-from periodparser.models.text_token import TextToken
-from periodparser.utils.parser_extractors import ParserExtractors
+from ..utils.parser_extractors import ParserExtractors
+from .abstract_period import AbstractPeriod
+from .i_has_edges import IHasEdges
+from .text_token import TextToken
 
 
 class DatesRawData:

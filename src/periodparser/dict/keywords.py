@@ -52,14 +52,14 @@ class Keywords:
 
     MONDAY = ["понедельник", "пн"]
     TUESDAY = ["вторник", "вт"]
-    WEDNESDAY = ["среда", "cp"]
+    WEDNESDAY = ["среда", "ср"]
     THURSDAY = ["четверг", "чт"]
     FRIDAY = ["пятница", "пт"]
-    SATURDAY = ["суббота", "c6"]
+    SATURDAY = ["суббота", "сб"]
     SUNDAY = ["воскресенье", "вс"]
 
     DAYTIME_DAY = ["днём", "днем"]
-    TIME_FROM = ["в", "c"]
+    TIME_FROM = ["в", "с"]
     TIME_TO = ["до", "по"]
     TIME_ON = ["на"]
 

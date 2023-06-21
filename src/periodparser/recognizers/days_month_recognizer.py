@@ -1,11 +1,12 @@
-from datetime import datetime
 from typing import List
+from datetime import datetime
 
-from periodparser.dict import Keywords
-from periodparser.models import AbstractPeriod, DatesRawData
-from periodparser.models.parser_models import FixPeriod
-from periodparser.recognizers.recognizer import Recognizer
-from periodparser.utils import ParserUtils
+from .recognizer import Recognizer
+from ..dict import Keywords
+from ..models import AbstractPeriod, DatesRawData
+from ..models.parser_models import FixPeriod
+from ..utils import ParserUtils
+from .recognizer import Recognizer
 
 
 class DaysMonthRecognizer(Recognizer):

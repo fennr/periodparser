@@ -1,9 +1,9 @@
 from datetime import datetime
-from re import sub
 from typing import Optional
+from re import sub
 
-from periodparser.models.parse_result import PeriodResult
-from periodparser.text_parser import parse
+from .models.parse_result import ParseResult
+from .text_parser import parse
 
 
 def preprocess(phrase: str) -> str:
@@ -23,9 +23,9 @@ def preprocess(phrase: str) -> str:
     # swap syntax
     phrase = sub(r"через (минут|часов|часа) (\d*)", r"через \2 \1", phrase)
     phrase = sub(r"(минут|часов|часа) через (\d*)", r"через \2 \1", phrase)
-    phrase = sub(r"в течение (\w*a)", r"через \1", phrase)
+    phrase = sub(r"в течение (\w*а)", r"через \1", phrase)
     phrase = phrase.replace("получас", "30 минут")
-    phrase = sub(r"(\d+) c половиной часа", r"\1 часа 30 минут", phrase)
+    phrase = sub(r"(\d+) с половиной часа", r"\1 часа 30 минут", phrase)
 
     return phrase
 
@@ -36,23 +36,23 @@ def preprocess_today(phrase: str) -> str:
     return phrase
 
 
-def extract(phrase: str, now: Optional[datetime] = None) -> PeriodResult:
+def exctract(phrase: str, now: Optional[datetime] = None) -> ParseResult:
     """
-    Извлекает период времени из заданной фразы и возвращает объект PeriodResult
-    
-    :param phrase: A string representing a period of time.
-    :type phrase: str
-    :param now: An optional datetime object representing the current time. Defaults to None.
-    :type now: Optional[datetime]
-    :return: A PeriodResult object containing information about the extracted period of time.
-    :rtype: PeriodResult
-    """
+        Извлекает период времени из заданной фразы и возвращает объект PeriodResult
+
+        :param phrase: Строка, содержащая период времени
+        :type phrase: str
+        :param now: Опциональный параметр, представляющий текущий момент времени
+        :type now: Optional[datetime]
+        :return: PeriodResult содержащий информацию о промежутке времени
+        :rtype: PeriodResult
+        """
     phrase = preprocess(phrase)
     now = now or datetime.now()
 
-    period_result = parse(phrase, now)
-    if not period_result.dates:
+    hors_result = parse(phrase, now)
+    if not hors_result.dates:
         phrase = preprocess_today(phrase)
-        period_result = parse(phrase, now)
+        hors_result = parse(phrase, now)
 
-    return period_result
+    return hors_result

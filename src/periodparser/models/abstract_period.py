@@ -1,8 +1,9 @@
-from copy import deepcopy
 from datetime import datetime, timedelta
+from copy import deepcopy
 
-from periodparser.models.i_has_edges import IHasEdges
-from periodparser.models.parser_models import MAX_PERIOD, FixPeriod
+from ..models.parser_models import FixPeriod, MAX_PERIOD
+from .i_has_edges import IHasEdges
+
 
 HALF_OF_DAY_IN_SEC = 12 * 60 * 60
 
@@ -74,7 +75,7 @@ class AbstractPeriod(IHasEdges):
 
     def __str__(self) -> str:
         return (
-            f"[Date={ self.date.isoformat() }, Time={ self.time !s}, Fixed={ bin(self.fixed) }]"
+            f"[Date={ self.date.isoformat() }, Time={ str(self.time) }, Fixed={ bin(self.fixed) }]"
         )
 
     @staticmethod
@@ -143,8 +144,9 @@ class AbstractPeriod(IHasEdges):
                 if (
                     base.time.seconds <= HALF_OF_DAY_IN_SEC
                     and cover.time.seconds > HALF_OF_DAY_IN_SEC
-                ) and not is_linked:
-                    base.time += timedelta(seconds=HALF_OF_DAY_IN_SEC)
+                ):
+                    if not is_linked:
+                        base.time += timedelta(seconds=HALF_OF_DAY_IN_SEC)
             time_got = True
 
         if cover.is_fixed(FixPeriod.TIME_UNCERTAIN) and not base.is_fixed(FixPeriod.TIME_UNCERTAIN):
