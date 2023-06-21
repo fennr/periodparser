@@ -1,8 +1,9 @@
-from re import sub
 from typing import Dict, Optional
+from re import sub
 
-from periodparser.dict import Keywords, Morph
-from periodparser.models.parser_models import DayTime, PartTime, Period, RelativeMode
+from ..dict import Keywords, Morph
+from ..models.parser_models import Period, RelativeMode, DayTime, PartTime
+
 
 PERIOD_MAPPING: Dict[Period, str] = {
     Period.MINUTE: "e",
@@ -30,11 +31,10 @@ DAYTIME_MAPPING: Dict[DayTime, str] = {
 PARTTIME_MAPPING: Dict[PartTime, str] = {PartTime.QUARTER: "Q", PartTime.HALF: "H"}
 
 
-
 class ParserExtractors:
     @staticmethod
     def create_pattern_from(token: str) -> str:
-        t = sub(r"[^0-9a-яё-]", "", token.lower()).strip()
+        t = sub(r"[^0-9а-яё-]", "", token.lower()).strip()
 
         if Morph.has_one_of_lemmas(t, Keywords.YEAR):
             return "Y"
@@ -89,6 +89,11 @@ class ParserExtractors:
             return "#"
 
         return "N" if t == "и" else "_"
+
+    # def create_pattern_from(token: str) -> str:
+
+
+# class ParserExtractors:
 
 
 def period_from(t: str) -> Optional[Period]:

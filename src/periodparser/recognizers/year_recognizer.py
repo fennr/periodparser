@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from periodparser.models import AbstractPeriod, DatesRawData
-from periodparser.models.parser_models import FixPeriod
-from periodparser.recognizers.recognizer import Recognizer
-from periodparser.utils import ParserUtils
+from .recognizer import Recognizer
+from ..models import AbstractPeriod, DatesRawData
+from ..models.parser_models import FixPeriod
+from ..utils import ParserUtils
+from .recognizer import Recognizer
 
 
 class YearRecognizer(Recognizer):

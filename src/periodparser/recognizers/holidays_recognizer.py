@@ -1,6 +1,7 @@
-from periodparser.dict import Keywords, LemmaSearchOptions, Morph
-from periodparser.models import DatesRawData, TextToken
-from periodparser.recognizers.recognizer import Recognizer
+from .recognizer import Recognizer
+from ..dict import Keywords, Morph, LemmaSearchOptions
+from ..models import DatesRawData, TextToken
+from .recognizer import Recognizer
 
 
 class HolidaysRecognizer(Recognizer):

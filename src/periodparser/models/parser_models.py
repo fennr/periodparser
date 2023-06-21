@@ -1,8 +1,8 @@
+from typing import Dict, Any
 from datetime import datetime, timedelta
 from enum import Enum, auto
-from typing import Any, Dict
 
-from periodparser.models.i_has_edges import IHasEdges
+from .i_has_edges import IHasEdges
 
 
 class FixPeriod(Enum):

@@ -1,11 +1,11 @@
+from typing import List, Dict, Set, Any
 from re import sub
-from typing import Any, Dict, List, Set
 
-from periodparser.models.parser_models import DateTimeToken
-from periodparser.utils import Helpers
+from ..utils import Helpers
+from .parser_models import DateTimeToken
 
 
-class PeriodResult:
+class ParseResult:
     source_text: str
     tokens: List[str]
     text: str

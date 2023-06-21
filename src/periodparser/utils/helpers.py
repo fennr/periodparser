@@ -1,5 +1,5 @@
-from string import punctuation
 from typing import List
+from string import punctuation
 
 
 class Helpers:

@@ -1,7 +1,7 @@
-from calendar import monthrange
 from typing import List
+from calendar import monthrange
 
-from periodparser.dict import Morph
+from ..dict import Morph
 
 
 class ParserUtils:

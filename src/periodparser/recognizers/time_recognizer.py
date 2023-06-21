@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 
-from periodparser.models import AbstractPeriod, DatesRawData
-from periodparser.models.parser_models import FixPeriod
-from periodparser.recognizers.recognizer import Recognizer
+from .recognizer import Recognizer
+from ..models import AbstractPeriod, DatesRawData
+from ..models.parser_models import FixPeriod
+from .recognizer import Recognizer
 
 
 class TimeRecognizer(Recognizer):
@@ -57,8 +58,9 @@ class TimeRecognizer(Recognizer):
                     elif part == "v":
                         if hours <= 11:
                             hours += 12
-                    elif part == "g" and hours >= 10:
-                        hours += 12
+                    elif part == "g":
+                        if hours >= 10:
+                            hours += 12
 
                     if hours == 24:
                         hours = 0

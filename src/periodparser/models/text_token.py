@@ -1,4 +1,4 @@
-from periodparser.models.i_has_edges import IHasEdges
+from .i_has_edges import IHasEdges
 
 
 class TextToken(IHasEdges):
