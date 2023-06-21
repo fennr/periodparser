@@ -1,18 +1,18 @@
 import unittest
 from datetime import datetime
 
-from src.periodparser import exctract
+from src.periodparser import extract
 from src.periodparser.models.parser_models import DateTimeTokenType
 
 
 class BaseParserTests(unittest.TestCase):
     def test_no_dates(self):
-        result = exctract("в день, какой неведомо, в никаком году")
+        result = extract("в день, какой неведомо, в никаком году")
         self.assertEqual(0, len(result.dates))
 
     def test_january(self):
         starting_point = datetime(2019, 10, 13)
-        result = exctract("10 января событие", starting_point)
+        result = extract("10 января событие", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -22,7 +22,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_time_period_before_day(self):
         starting_point = datetime(2019, 10, 13)
-        result = exctract("с 5 до 7 вечера в понедельник будет событие", starting_point)
+        result = extract("с 5 до 7 вечера в понедельник будет событие", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -33,7 +33,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_time_period_simple(self):
         starting_point = datetime(2019, 10, 13)
-        result = exctract("с 10 до 13 событие", starting_point)
+        result = extract("с 10 до 13 событие", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -43,7 +43,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_daytime(self):
         starting_point = datetime(2019, 10, 14)
-        result = exctract("Завтра в час обед и продлится он час с небольшим", starting_point)
+        result = extract("Завтра в час обед и продлится он час с небольшим", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -52,7 +52,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_nighttime(self):
         starting_point = datetime(2020, 1, 1)
-        result = exctract(
+        result = extract(
             "Завтра в 2 ночи полнолуние, а затем в 3 часа ночи новолуние и наконец в 12 часов ночи игра.",
             starting_point,
         )
@@ -73,7 +73,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_long_period(self):
         starting_point = datetime(2019, 10, 14)
-        result = exctract(
+        result = extract(
             "С вечера следующей среды до четверти 10 утра понедельника в декабре можно будет наблюдать снег",
             starting_point,
         )
@@ -91,7 +91,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_collapse_complex(self):
         starting_point = datetime(2019, 10, 13)
-        result = exctract("В понедельник в 9 и 10 вечера", starting_point)
+        result = extract("В понедельник в 9 и 10 вечера", starting_point)
         self.assertEqual(2, len(result.dates))
 
         date = result.dates[0]
@@ -103,7 +103,7 @@ class BaseParserTests(unittest.TestCase):
         self.assertEqual(14, date.date_from.day)
         self.assertEqual(22, date.date_from.hour)
 
-        result = exctract("В понедельник в 10 и 9 вечера", starting_point)
+        result = extract("В понедельник в 10 и 9 вечера", starting_point)
         self.assertEqual(2, len(result.dates))
 
         date = result.dates[0]
@@ -117,7 +117,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_multiple_simple(self):
         starting_point = datetime(2019, 10, 13)
-        result = exctract(
+        result = extract(
             "Позавчера в 6:30 состоялось совещание, а завтра днём будет хорошая погода.",
             starting_point,
         )
@@ -141,7 +141,7 @@ class BaseParserTests(unittest.TestCase):
             "С понедельника в следующем месяце буду ходить в спортзал!",
         ]
         for s in strings:
-            result = exctract(s, starting_point)
+            result = extract(s, starting_point)
             self.assertEqual(1, len(result.dates))
 
             date = result.dates[0]
@@ -151,7 +151,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_weekday(self):
         starting_point = datetime(2019, 10, 13)
-        result = exctract("В следующем месяце во вторник состоится событие", starting_point)
+        result = extract("В следующем месяце во вторник состоится событие", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -159,7 +159,7 @@ class BaseParserTests(unittest.TestCase):
         self.assertEqual(5, date.date_from.day)
         self.assertEqual(11, date.date_from.month)
 
-        result = exctract("Через месяц во вторник состоится событие", starting_point)
+        result = extract("Через месяц во вторник состоится событие", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -169,7 +169,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_time_after_day(self):
         starting_point = datetime(2019, 10, 8)
-        result = exctract("в четверг 16 0 0 будет событие", starting_point)
+        result = extract("в четверг 16 0 0 будет событие", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -180,7 +180,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_time_period(self):
         starting_point = datetime(2019, 9, 7)
-        result = exctract(
+        result = extract(
             "В следующий четверг с 9 утра до 6 вечера важный экзамен!", starting_point
         )
         self.assertEqual(1, len(result.dates))
@@ -198,7 +198,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_complex_period(self):
         starting_point = datetime(2019, 7, 7)
-        result = exctract(
+        result = extract(
             "хакатон с 12 часов 18 сентября до 12 часов 20 сентября", starting_point
         )
         self.assertEqual(1, len(result.dates))
@@ -217,7 +217,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_time_before_day(self):
         starting_point = datetime(2019, 9, 7)
-        result = exctract("В 12 часов 12 сентября будет встреча", starting_point)
+        result = extract("В 12 часов 12 сентября будет встреча", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -229,7 +229,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_time_hour_of_day(self):
         starting_point = datetime(2019, 9, 7)
-        result = exctract("24 сентября в час дня", starting_point)
+        result = extract("24 сентября в час дня", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -242,7 +242,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_fix_period(self):
         starting_point = datetime(2019, 9, 7)
-        result = exctract("на выходных будет хорошо", starting_point)
+        result = extract("на выходных будет хорошо", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -258,7 +258,7 @@ class BaseParserTests(unittest.TestCase):
             "с 11 до 15 сентября будет командировка",
         ]
         for s in strings:
-            result = exctract(s, starting_point)
+            result = extract(s, starting_point)
             self.assertEqual(1, len(result.dates))
 
             date = result.dates[0]
@@ -269,7 +269,7 @@ class BaseParserTests(unittest.TestCase):
             self.assertEqual(9, date.date_to.month)
 
         starting_point = datetime(2019, 9, 6)
-        result = exctract("с 11 до 15 числа будет командировка", starting_point)
+        result = extract("с 11 до 15 числа будет командировка", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -281,7 +281,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_days_of_week(self):
         starting_point = datetime(2019, 9, 6)
-        result = exctract("во вторник встреча с заказчиком", starting_point)
+        result = extract("во вторник встреча с заказчиком", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -290,7 +290,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_holidays(self):
         starting_point = datetime(2019, 9, 2)
-        result = exctract("в эти выходные еду на дачу", starting_point)
+        result = extract("в эти выходные еду на дачу", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -300,7 +300,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_holiday(self):
         starting_point = datetime(2019, 9, 2)
-        result = exctract("пойду гулять в следующий выходной", starting_point)
+        result = extract("пойду гулять в следующий выходной", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]
@@ -310,7 +310,7 @@ class BaseParserTests(unittest.TestCase):
 
     def test_from_to_reversed(self):
         starting_point = datetime(2019, 10, 13)
-        result = exctract("с 2 до 5", starting_point)
+        result = extract("с 2 до 5", starting_point)
         self.assertEqual(1, len(result.dates))
 
         date = result.dates[0]

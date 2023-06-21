@@ -1,4 +1,1 @@
-from .sugar import exctract
-
-
-VERSION = "0.1.5"
+from .sugar import extract
