@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+
+  devcontainer:
+    build:
+      context: .
+      target: dev
+      secrets:
+        - poetry-auth
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION:-3.8}
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    secrets:
+      - poetry-auth
+    volumes:
+      - ..:/workspaces
+      - command-history-volume:/home/user/.history/
+
+  dev:
+    extends: devcontainer
+    stdin_open: true
+    tty: true
+    entrypoint: []
+    command:
+      [
+        "sh",
+        "-c",
+        "sudo chown user $$SSH_AUTH_SOCK && cp --update /opt/build/poetry/poetry.lock /workspaces/periodparser/ && mkdir -p /workspaces/periodparser/.git/hooks/ && cp --update /opt/build/git/* /workspaces/periodparser/.git/hooks/ && zsh"
+      ]
+    environment:
+      - SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock
+    volumes:
+      - ~/.gitconfig:/etc/gitconfig
+      - ~/.ssh/known_hosts:/home/user/.ssh/known_hosts
+      - ${SSH_AGENT_AUTH_SOCK:-/run/host-services/ssh-auth.sock}:/run/host-services/ssh-auth.sock
+    profiles:
+      - dev
+
+secrets:
+  poetry-auth:
+    file: "${POETRY_AUTH_TOML_PATH:-~/Library/Preferences/pypoetry/auth.toml}"
+
+volumes:
+  command-history-volume:

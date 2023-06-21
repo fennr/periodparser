@@ -1,0 +1,31 @@
+{
+  "template": "https://github.com/radix-ai/poetry-cookiecutter",
+  "commit": "715f2bb25440f8fb18576a499be7c16207336191",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "package_name": "periodparser",
+      "package_description": "python parser for human readable period dates",
+      "package_url": "https://github.com/fennr/periodparser",
+      "author_name": "fenn_r",
+      "author_email": "fenrir1121@gmail.com",
+      "python_version": "3.8",
+      "development_environment": "strict",
+      "with_conventional_commits": "1",
+      "with_fastapi_api": "0",
+      "with_jupyter_lab": "0",
+      "with_pydantic_typing": "0",
+      "with_sentry_logging": "0",
+      "with_streamlit_app": "0",
+      "with_typer_cli": "0",
+      "continuous_integration": "GitHub",
+      "docstring_style": "Google",
+      "private_package_repository_name": "periodparser",
+      "private_package_repository_url": "https://github.com/fennr/periodparser",
+      "__package_name_kebab_case": "periodparser",
+      "__package_name_snake_case": "periodparser",
+      "_template": "https://github.com/radix-ai/poetry-cookiecutter"
+    }
+  },
+  "directory": null
+}
