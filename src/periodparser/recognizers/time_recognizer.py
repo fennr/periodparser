@@ -8,7 +8,7 @@ from .recognizer import Recognizer
 
 class TimeRecognizer(Recognizer):
     regex_pattern = r"([rvgd])?([fot])?(Q|H)?(h|(0)(h)?)((0)e?)?([rvgd])?"
-
+    counter = 0
     def parse_match(self, data: DatesRawData, match, now: datetime) -> bool:
         if (
             match.group(5) is not None
@@ -25,7 +25,7 @@ class TimeRecognizer(Recognizer):
                     return False
 
             hours = 1 if match.group(5) is None else int(data.tokens[match.start(5)].value)
-            if 0 <= hours <= 23:
+            if 0 <= hours <= 24:
                 minutes = 0
                 if match.group(8) is not None:
                     m = int(data.tokens[match.start(8)].value)
@@ -72,8 +72,9 @@ class TimeRecognizer(Recognizer):
                 if match.group(2) == "t":
                     data.return_tokens(s, "t", to_time)
             # if 0 <= hours <= 23:
-
-            return True
+            self.counter += 1
+            if self.counter < 99:
+                return True
         #  if match.group(5) is not None or match.group(6) is not None or match.group(4) is not None or match.group(1) is not None or match.group(9):
 
         return False
