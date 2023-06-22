@@ -155,8 +155,6 @@ def create_date_period(
         date_to_save = DateTimeToken()
         date_to_save.date_from = from_token.date_from
         date_to_save.date_to = date_to
-        print(date_to_save.date_from)
-        print(date_to_save.date_to)
         date_to_save.type = DateTimeTokenType.PERIOD
         date_to_save.has_time = from_token.has_time or to_token.has_time
     else:

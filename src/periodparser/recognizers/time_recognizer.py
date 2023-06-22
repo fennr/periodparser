@@ -25,7 +25,7 @@ class TimeRecognizer(Recognizer):
                     return False
 
             hours = 1 if match.group(5) is None else int(data.tokens[match.start(5)].value)
-            if 0 <= hours <= 24:
+            if 0 <= hours <= 23:
                 minutes = 0
                 if match.group(8) is not None:
                     m = int(data.tokens[match.start(8)].value)
