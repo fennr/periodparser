@@ -147,11 +147,16 @@ def create_date_period(
             elif resolution == FixPeriod.MONTH:
                 date_to = date_to.replace(year=date_to.year + 1)
             else:
-                date_to = date_to.replace(hour=date_to.hour + 12)
+                try:
+                    date_to = date_to.replace(hour=date_to.hour + 12)
+                except ValueError:
+                    date_to += timedelta(days=1)
 
         date_to_save = DateTimeToken()
         date_to_save.date_from = from_token.date_from
         date_to_save.date_to = date_to
+        print(date_to_save.date_from)
+        print(date_to_save.date_to)
         date_to_save.type = DateTimeTokenType.PERIOD
         date_to_save.has_time = from_token.has_time or to_token.has_time
     else:
